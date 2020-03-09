@@ -5,8 +5,7 @@
  */
 package cecar.edu.modelo;
 
-import java.io.File;
-import java.util.Date;
+import java.util.ArrayList;
 
 /**
  *
@@ -15,19 +14,15 @@ import java.util.Date;
 public class Pagina {
     
     private String url;
-    private Date fecha;
-    private String tipoArchivo;
-    private File archivo;
+    private String fecha;
+    ArrayList<Archivo> archivos=new ArrayList<>();
 
     public Pagina() {
-        super();
     }
 
-    public Pagina(String url, Date fecha, String tipoArchivo, File archivo) {
+    public Pagina(String url, String fecha) {
         this.url = url;
         this.fecha = fecha;
-        this.tipoArchivo = tipoArchivo;
-        this.archivo = archivo;
     }
 
     public String getUrl() {
@@ -38,28 +33,25 @@ public class Pagina {
         this.url = url;
     }
 
-    public Date getFecha() {
+    public String getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(String fecha) {
         this.fecha = fecha;
     }
 
-    public String getTipoArchivo() {
-        return tipoArchivo;
+    public ArrayList<Archivo> getArchivos() {
+        return archivos;
     }
 
-    public void setTipoArchivo(String tipoArchivo) {
-        this.tipoArchivo = tipoArchivo;
+    public void setArchivos(ArrayList<Archivo> archivos) {
+        this.archivos = archivos;
     }
 
-    public File getArchivo() {
-        return archivo;
-    }
+   
 
-    public void setArchivo(File archivo) {
-        this.archivo = archivo;
-    }
     
+
+  
 }

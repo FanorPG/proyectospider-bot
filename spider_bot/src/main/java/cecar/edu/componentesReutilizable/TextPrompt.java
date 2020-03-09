@@ -1,4 +1,4 @@
-package cecar.edu.vista;
+package cecar.edu.componentesReutilizable;
 
 
 import java.awt.*;
