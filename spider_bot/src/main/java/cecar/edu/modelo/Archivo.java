@@ -5,17 +5,20 @@
  */
 package cecar.edu.modelo;
 
-import java.io.File;
-
 /**
  *
  * @author Fanorpro
  */
 public class Archivo {
     private String tipoArchivo;
-    private File archivoDesc;
+    private byte[] archivoDesc;
 
     public Archivo() {
+    }
+
+    public Archivo(String tipoArchivo, byte[] archivoDesc) {
+        this.tipoArchivo = tipoArchivo;
+        this.archivoDesc = archivoDesc;
     }
 
     public String getTipoArchivo() {
@@ -26,13 +29,17 @@ public class Archivo {
         this.tipoArchivo = tipoArchivo;
     }
 
-    public File getArchivoDesc() {
+    public byte[] getArchivoDesc() {
         return archivoDesc;
     }
 
-    public void setArchivoDesc(File archivoDesc) {
+    public void setArchivoDesc(byte[] archivoDesc) {
         this.archivoDesc = archivoDesc;
     }
+
+    
+
+   
 
     
 }

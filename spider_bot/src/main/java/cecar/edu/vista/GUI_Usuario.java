@@ -9,19 +9,22 @@ import cecar.edu.componentesReutilizable.ConectarMySQL;
 import cecar.edu.componentesReutilizable.TextPrompt;
 import cecar.edu.controlador.ControladorPaginaDAO;
 import cecar.edu.controlador.ControladorScraping;
-import cecar.edu.modelo.Archivo;
 import cecar.edu.modelo.Pagina;
+import java.awt.Cursor;
 import java.awt.Image;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.apache.commons.validator.UrlValidator;
-import java.util.Calendar;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
@@ -38,6 +41,8 @@ public class GUI_Usuario extends javax.swing.JFrame {
         initComponents();
         TextPrompt url = new TextPrompt("URL *", JTextUrl);
         TextPrompt num = new TextPrompt("Nº Limite de paginas *", jTextField2);
+        jButton4.setVisible(false);
+        jButton5.setVisible(false);
     }
 
     /**
@@ -63,6 +68,9 @@ public class GUI_Usuario extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
+        jLabel3url = new javax.swing.JLabel();
+        jLabel3tipoArchivo = new javax.swing.JLabel();
+        jLabel3fechayhora = new javax.swing.JLabel();
         jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -190,14 +198,35 @@ public class GUI_Usuario extends javax.swing.JFrame {
             }
         });
         jPanel7.add(jButton4);
-        jButton4.setBounds(40, 170, 130, 23);
+        jButton4.setBounds(40, 170, 130, 32);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos de busqueda"));
         jPanel1.setLayout(null);
+
+        jLabel3url.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel3url.setText("URL: ");
+        jPanel1.add(jLabel3url);
+        jLabel3url.setBounds(20, 30, 460, 40);
+
+        jLabel3tipoArchivo.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel3tipoArchivo.setText("Tipo de Archivo:");
+        jPanel1.add(jLabel3tipoArchivo);
+        jLabel3tipoArchivo.setBounds(20, 130, 460, 40);
+
+        jLabel3fechayhora.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel3fechayhora.setText("Fecha y Hora:");
+        jPanel1.add(jLabel3fechayhora);
+        jLabel3fechayhora.setBounds(20, 80, 460, 40);
+
         jPanel7.add(jPanel1);
         jPanel1.setBounds(190, 40, 500, 340);
 
         jButton5.setText("Burcar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
         jPanel7.add(jButton5);
         jButton5.setBounds(40, 330, 130, 50);
 
@@ -232,16 +261,21 @@ public class GUI_Usuario extends javax.swing.JFrame {
 
                         
         String url = JTextUrl.getText();
-        
+        this.setCursor(Cursor.getPredefinedCursor( Cursor.WAIT_CURSOR ));
         //Validar URL
         if (urlValidator(url)) {
-            //comienza el scraping
-            ControladorScraping.getpaises(url);
+            try {
+                //comienza el scraping
+                ControladorScraping.getPagina(url);
+            } catch (SQLException ex) {
+                Logger.getLogger(GUI_Usuario.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
         } else {
             JOptionPane.showMessageDialog(null, "La url dada " + JTextUrl.getText() + " NO es válida");
             JTextUrl.setText("");
         }
+        this.setCursor( Cursor.getPredefinedCursor( Cursor.DEFAULT_CURSOR ) );
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
@@ -276,11 +310,11 @@ public class GUI_Usuario extends javax.swing.JFrame {
         jButton4.setVisible(false);
         jButton5.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
-
+JFileChooser j=null;
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
        jLabel2.setIcon(null);
-        JFileChooser j=new JFileChooser();
+         j=new JFileChooser();
         j.setFileSelectionMode(JFileChooser.FILES_ONLY);//solo archivos y no carpetas
         int estado=j.showOpenDialog(null);
         if(estado== JFileChooser.APPROVE_OPTION){
@@ -293,6 +327,7 @@ public class GUI_Usuario extends javax.swing.JFrame {
                             (jLabel2.getWidth(),jLabel2.getHeight(),Image.SCALE_DEFAULT);
                     jLabel2.setIcon(new ImageIcon(icono));
                     jLabel2.updateUI();
+                    System.out.println(j.getSelectedFile());
 
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(rootPane, "imagen: "+ex);
@@ -302,6 +337,27 @@ public class GUI_Usuario extends javax.swing.JFrame {
             }
         }  
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        try {
+            // TODO add your handling code here:
+            ControladorPaginaDAO controladorPaginaDAO= new ControladorPaginaDAO();
+            Pagina pagina=new Pagina();
+            pagina=controladorPaginaDAO.consultar(j.getSelectedFile()+"",this.longitudBytes);
+            if(pagina!=null){
+                jLabel3url.setText("URL: "+pagina.getUrl());
+                jLabel3fechayhora.setText("Fecha y Hora: "+pagina.getFecha());
+                jLabel3tipoArchivo.setText("Tipo de archivo: "+pagina.getArchivos().get(0).getTipoArchivo());
+            }else{
+                JOptionPane.showMessageDialog(null, "no encontrada");
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "verifiqui img");
+            Logger.getLogger(GUI_Usuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     
     
@@ -342,10 +398,23 @@ public class GUI_Usuario extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(GUI_Usuario.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InstantiationException ex) {
+                    Logger.getLogger(GUI_Usuario.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IllegalAccessException ex) {
+                    Logger.getLogger(GUI_Usuario.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (UnsupportedLookAndFeelException ex) {
+                    Logger.getLogger(GUI_Usuario.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 new GUI_Usuario().setVisible(true);
+                
             }
         });
         ConectarMySQL.getConectarMySQL();
+       
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -357,6 +426,9 @@ public class GUI_Usuario extends javax.swing.JFrame {
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3fechayhora;
+    private javax.swing.JLabel jLabel3tipoArchivo;
+    private javax.swing.JLabel jLabel3url;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
