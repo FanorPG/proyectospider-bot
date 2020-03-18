@@ -1,21 +1,26 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Clase: Pagina.java
+ *
+ * @version: 0.1
+ *
+ * Fecha de Creación: 29/02/2020
+ *
+ * Fecha de modificación: 
+ *
+ * @author: Fanor Pertuz Galvan
+ * 
+ * @author: Ariel Torres Jimenez
+ *
+ * Copyright: CECAR
+ *
  */
 package cecar.edu.modelo;
 
-import java.util.ArrayList;
 
-/**
- *
- * @author ProFanor
- */
 public class Pagina {
     
     private String url;
     private String fecha;
-    ArrayList<Archivo> archivos=new ArrayList<>();
 
     public Pagina() {
     }
@@ -39,14 +44,6 @@ public class Pagina {
 
     public void setFecha(String fecha) {
         this.fecha = fecha;
-    }
-
-    public ArrayList<Archivo> getArchivos() {
-        return archivos;
-    }
-
-    public void setArchivos(ArrayList<Archivo> archivos) {
-        this.archivos = archivos;
     }
 
    

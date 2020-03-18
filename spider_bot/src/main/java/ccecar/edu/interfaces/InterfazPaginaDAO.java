@@ -1,7 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Interfaz: InterfazPagina.java
+ *
+ * @version: 0.1
+ *
+ * Fecha de Creación: 9/03/2020
+ *
+ * Fecha de modificación: 
+ *
+ * @author: Fanor Pertuz Galvan
+ * 
+ * @author: Ariel Torres Jimenez
+ *
+ * Copyright: CECAR
+ *
  */
 package ccecar.edu.interfaces;
 

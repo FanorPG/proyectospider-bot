@@ -1,7 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Clase: ControladorPaginaDAO.java
+ *
+ * @version: 0.1
+ *
+ * Fecha de Creación: 8/03/2020
+ *
+ * Fecha de modificación: 
+ *
+ * @author: Fanor Pertuz Galvan
+ * 
+ * @author: Ariel Torres Jimenez
+ *
+ * Copyright: CECAR
+ *
  */
 package cecar.edu.controlador;
 
@@ -18,6 +29,7 @@ import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import javax.swing.JOptionPane;
 import sun.misc.IOUtils;
 
@@ -47,6 +59,7 @@ public class ControladorPaginaDAO implements InterfazPaginaDAO<Pagina> {
     
     @Override
     public String guardar(Pagina t) {
+        //variable de retorno si todo sale bien
         String resultado = "OK";
 
         try {
@@ -107,6 +120,7 @@ public class ControladorPaginaDAO implements InterfazPaginaDAO<Pagina> {
 
     }
 
+    public static String tipoA="";
     public Pagina consultar(String criteriosBusqueda, int i) throws IOException {
         Archivo archivo = null;
         Pagina pagina = null;
@@ -118,11 +132,10 @@ public class ControladorPaginaDAO implements InterfazPaginaDAO<Pagina> {
             PreparedStatement preparedStatement
                     = ConectarMySQL.getConexion().
                             prepareStatement("Select * from  " + archiTab
-                                    + " where archivo = ?");
+                                    + " where archivo ");
 
             System.out.println("buscando: " + criteriosBusqueda + " en la BD "+ bFile);
 
-            preparedStatement.setBytes(i, bFile);
             ResultSet resultSet = preparedStatement.executeQuery();
             System.out.println("Buscano img ...");
             if (resultSet.next()) {
@@ -131,8 +144,11 @@ public class ControladorPaginaDAO implements InterfazPaginaDAO<Pagina> {
                 InputStream is = blob.getBinaryStream();
                 byte[] bytes = IOUtils.readFully(is, -1, false);
 
-                archivo = new Archivo(resultSet.getString("tipoarchvo"), bytes);
-
+                boolean b= Arrays.equals(bytes, bFile);
+                if(b){
+                archivo.setTipoArchivo(resultSet.getString("tipoarchivo"));
+                pagina.setUrl(resultSet.getString("url"));
+                tipoA=resultSet.getString("tipoarchivo");
                 PreparedStatement preparedStatement2
                         = ConectarMySQL.getConexion().
                                 prepareStatement("Select * from  " + pagiTab
@@ -143,9 +159,8 @@ public class ControladorPaginaDAO implements InterfazPaginaDAO<Pagina> {
 
                 pagina = new Pagina();
                 if (resultSet2.next()) {
-                    pagina.setUrl(resultSet2.getString("url"));
                     pagina.setFecha(resultSet2.getString("fecha"));
-                    pagina.getArchivos().add(archivo);
+                }
                 }
             }
 

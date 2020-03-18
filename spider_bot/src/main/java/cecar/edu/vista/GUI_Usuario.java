@@ -11,6 +11,7 @@ import cecar.edu.controlador.ControladorPaginaDAO;
 import cecar.edu.controlador.ControladorScraping;
 import cecar.edu.modelo.Pagina;
 import java.awt.Cursor;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,6 +35,7 @@ public class GUI_Usuario extends javax.swing.JFrame {
 
     FileInputStream fis;
     int longitudBytes;
+
     /**
      * Creates new form GUI_Usuario
      */
@@ -247,7 +249,7 @@ public class GUI_Usuario extends javax.swing.JFrame {
             evt.consume();
             JOptionPane.showMessageDialog(null, "Ingrese solo números");
         }
-        if (JTextUrl.getText().length() >= 10) {
+        if (jTextField2.getText().length() >= 10) {
             evt.consume();
             getToolkit().beep();
         }
@@ -257,25 +259,67 @@ public class GUI_Usuario extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField2MouseClicked
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    void cursorCargando() {
 
-                        
-        String url = JTextUrl.getText();
-        this.setCursor(Cursor.getPredefinedCursor( Cursor.WAIT_CURSOR ));
-        //Validar URL
-        if (urlValidator(url)) {
-            try {
-                //comienza el scraping
-                ControladorScraping.getPagina(url);
-            } catch (SQLException ex) {
-                Logger.getLogger(GUI_Usuario.class.getName()).log(Level.SEVERE, null, ex);
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        jButton2.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        jPanel1.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        jPanel2.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        jPanel3.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        jPanel4.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        jPanel5.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        jPanel7.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+    }
+
+    void cursorDefault() {
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        jButton2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        jPanel1.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        jPanel2.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        jPanel3.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        jPanel4.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        jPanel5.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        jPanel7.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    }
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        try {
+            int recorrer=Integer.parseInt(jTextField2.getText());
+            if (Integer.parseInt(jTextField2.getText()) >= 0) {
+                cursorCargando();
+                String url = JTextUrl.getText();
+                //Validar URL
+                if (urlValidator(url)) {
+                    try {
+                        //comienza el scraping
+                        ControladorScraping.getPagina(url);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(GUI_Usuario.class.getName()).log(Level.SEVERE, null, ex);
+                        cursorDefault();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "La url dada " + JTextUrl.getText() + " NO es válida");
+                    JTextUrl.setText("");
+                    cursorDefault();
+                }
+                for(int c=0;c<recorrer;c++){
+                    if (urlValidator(ControladorScraping.paginasEncontradas.get(c))) {
+                    try {
+                        //comienza el scraping
+                        ControladorScraping.getPagina(ControladorScraping.paginasEncontradas.get(c));
+                    } catch (SQLException ex) {
+                        Logger.getLogger(GUI_Usuario.class.getName()).log(Level.SEVERE, null, ex);
+                        cursorDefault();
+                    }
+                }
+                    ControladorScraping.paginasEncontradas.clear();
+                }
             }
-            
-        } else {
-            JOptionPane.showMessageDialog(null, "La url dada " + JTextUrl.getText() + " NO es válida");
-            JTextUrl.setText("");
+             cursorDefault();
+        } catch (HeadlessException | NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Porfavor ponga limite de paginas");
+            jTextField2.setFocusable(true);
         }
-        this.setCursor( Cursor.getPredefinedCursor( Cursor.DEFAULT_CURSOR ) );
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
@@ -298,7 +342,7 @@ public class GUI_Usuario extends javax.swing.JFrame {
         // TODO add your handling code here:
         jPanel7.setVisible(true);
         jPanel5.setVisible(false);
-        
+
         jButton4.setVisible(true);
         jButton5.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -310,57 +354,54 @@ public class GUI_Usuario extends javax.swing.JFrame {
         jButton4.setVisible(false);
         jButton5.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
-JFileChooser j=null;
+    JFileChooser j = null;
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-       jLabel2.setIcon(null);
-         j=new JFileChooser();
+        jLabel2.setIcon(null);
+        j = new JFileChooser();
         j.setFileSelectionMode(JFileChooser.FILES_ONLY);//solo archivos y no carpetas
-        int estado=j.showOpenDialog(null);
-        if(estado== JFileChooser.APPROVE_OPTION){
-            try{
-                fis=new FileInputStream(j.getSelectedFile());
+        int estado = j.showOpenDialog(null);
+        if (estado == JFileChooser.APPROVE_OPTION) {
+            try {
+                fis = new FileInputStream(j.getSelectedFile());
                 //necesitamos saber la cantidad de bytes
-                this.longitudBytes=(int)j.getSelectedFile().length();
+                this.longitudBytes = (int) j.getSelectedFile().length();
                 try {
-                    Image icono=ImageIO.read(j.getSelectedFile()).getScaledInstance
-                            (jLabel2.getWidth(),jLabel2.getHeight(),Image.SCALE_DEFAULT);
+                    Image icono = ImageIO.read(j.getSelectedFile()).getScaledInstance(jLabel2.getWidth(), jLabel2.getHeight(), Image.SCALE_DEFAULT);
                     jLabel2.setIcon(new ImageIcon(icono));
                     jLabel2.updateUI();
                     System.out.println(j.getSelectedFile());
 
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(rootPane, "imagen: "+ex);
+                    JOptionPane.showMessageDialog(rootPane, "imagen: " + ex);
                 }
-            }catch(FileNotFoundException ex){
+            } catch (FileNotFoundException ex) {
                 ex.printStackTrace();
             }
-        }  
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         try {
             // TODO add your handling code here:
-            ControladorPaginaDAO controladorPaginaDAO= new ControladorPaginaDAO();
-            Pagina pagina=new Pagina();
-            pagina=controladorPaginaDAO.consultar(j.getSelectedFile()+"",this.longitudBytes);
-            if(pagina!=null){
-                jLabel3url.setText("URL: "+pagina.getUrl());
-                jLabel3fechayhora.setText("Fecha y Hora: "+pagina.getFecha());
-                jLabel3tipoArchivo.setText("Tipo de archivo: "+pagina.getArchivos().get(0).getTipoArchivo());
-            }else{
+            ControladorPaginaDAO controladorPaginaDAO = new ControladorPaginaDAO();
+            Pagina pagina = new Pagina();
+            pagina = controladorPaginaDAO.consultar(j.getSelectedFile() + "", this.longitudBytes);
+            if (pagina != null) {
+                jLabel3url.setText("URL: " + pagina.getUrl());
+                jLabel3fechayhora.setText("Fecha y Hora: " + pagina.getFecha());
+                jLabel3tipoArchivo.setText("Tipo de archivo: "+ControladorPaginaDAO.tipoA);
+            } else {
                 JOptionPane.showMessageDialog(null, "no encontrada");
             }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "verifiqui img");
             Logger.getLogger(GUI_Usuario.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
+
+
     }//GEN-LAST:event_jButton5ActionPerformed
 
-    
-    
     public static boolean urlValidator(String url) {
         //validación de url
 
@@ -410,11 +451,11 @@ JFileChooser j=null;
                     Logger.getLogger(GUI_Usuario.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 new GUI_Usuario().setVisible(true);
-                
+
             }
         });
         ConectarMySQL.getConectarMySQL();
-       
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
